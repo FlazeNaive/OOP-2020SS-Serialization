@@ -1,0 +1,4 @@
+﻿  binary.cpp
+C:\Users\thinkpad\Desktop\Final_\binary.cpp(103,24): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\thinkpad\Desktop\Final_\binary.cpp(103,37): warning C4305: “+=”: 从“double”到“float”截断
+  Final_.vcxproj -> C:\Users\thinkpad\Desktop\Final_\Debug\Final_.exe
