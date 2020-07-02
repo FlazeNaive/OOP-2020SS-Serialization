@@ -61,7 +61,7 @@ void deserialize(string &data, const char* FILENAME) {
 }
 
 //============================================================
-//==================== Vector ================================
+//==================== Vector & List =========================
 template<IsLinear Container>
 void serialize(Container data, const char* FILENAME) {
 	fstream OUT(FILENAME, ios::out | ios::binary) ;	
