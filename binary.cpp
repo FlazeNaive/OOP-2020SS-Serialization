@@ -9,6 +9,7 @@
 	cout << endl ;
 #include<iostream>
 #include<fstream>
+#include<sstream>
 #include<string>
 #include<vector>
 #include<iterator>
@@ -33,15 +34,15 @@ concept IsSet = std::is_same<Container, std::set<typename Container::value_type>
 //============================================================
 //==================== Arithmetic ============================
 template<IsNumber T>
-void serialize(T data, const char* FILENAME) {
-	fstream OUT(FILENAME, ios::out | ios::binary) ;	
+void serialize(T data, fstream &OUT) {
+	//fstream OUT(FILENAME, ios::out | ios::binary) ;	
 	char *TMP = new char[sizeof(T)] ;
 	memcpy(TMP, &data, sizeof(data)) ;
 	OUT.write(TMP, sizeof(TMP)) ;
 }
 template<IsNumber T>
-void deserialize(T &data, const char* FILENAME) {
-	fstream IN(FILENAME, ios::in | ios::binary) ;	
+void deserialize(T &data, fstream &IN) {
+	//fstream IN(FILENAME, ios::in | ios::binary) ;	
 	char *TMP = new char[sizeof(T)] ;
 	IN.read(TMP, sizeof(TMP)) ;
 	memcpy(&data, TMP, sizeof(data)) ;
@@ -49,107 +50,74 @@ void deserialize(T &data, const char* FILENAME) {
 
 //============================================================
 //==================== String ================================
-void serialize(string data, const char* FILENAME) ;
-void deserialize(string &data, const char* FILENAME) ;
+void serialize(string data, fstream& OUT);
+void deserialize(string& data, fstream& IN);
 
-void serialize(string data, const char* FILENAME) {
-	fstream OUT(FILENAME, ios::out | ios::binary) ;	
-	const char *TMP = new char[data.size() + 1] ;
-	TMP = data.c_str() ;
-	OUT.write(TMP, data.size() + 1) ;
+void serialize(string data, fstream& OUT) {
+	int len = data.size() + 1;
+	serialize(len, OUT);
+	for (int i = 0; i < len; ++i)
+		serialize(data[i], OUT);
 }
-void deserialize(string &data, const char* FILENAME) {
-	fstream IN(FILENAME, ios::in | ios::binary) ;	
+void deserialize(string& data, fstream& IN){
+	int len;
+	deserialize(len, IN);
+	cout << "len = " << len << endl;
 	data.clear() ;
-	char cur ;
-	IN.read(&cur, sizeof(cur)) ;
-	while ( !IN.eof() ) {
+	for ( int i = 0; i < len; ++i ) {
+		char cur ;
+		deserialize(cur, IN);
 		data += cur ;
-		IN.read(&cur, sizeof(cur)) ;
 	}
+	cout << "STR : " << data << endl;
 }
 
 //============================================================
 //==================== Vector & List =========================
 template<IsLinear Container>
-void serialize(Container data, const char* FILENAME) {
-	fstream OUT(FILENAME, ios::out | ios::binary) ;	
+void serialize(Container data, fstream &OUT) {
 	typedef typename Container::value_type T;
-	char* TMP_SIZE = new char[sizeof(int)];
-	for (auto &i : data) {
-		int curSize = sizeof(i);
-		memcpy(TMP_SIZE, &curSize, sizeof(int));
-		OUT.write(TMP_SIZE, sizeof(int));
-
-		char* TMP = new char[curSize];
-		memcpy(TMP, &i, curSize);
-		OUT.write(TMP, curSize);
-	}
+	int siz = data.size();
+	serialize(siz, OUT);
+	for (auto &i : data)
+		serialize(i, OUT);
 }
 
 template<IsLinear Container>
-void deserialize(Container &data, const char* FILENAME) {
-	fstream IN(FILENAME, ios::in | ios::binary) ;	
+void deserialize(Container &data, fstream &IN){
 	typedef typename Container::value_type T;
-	
-	char* TMP_SIZE = new char[sizeof(int)];
-	int curSize;
+	int siz;
+	deserialize(siz, IN);
 
-	IN.read(TMP_SIZE, sizeof(int)) ;
-	memcpy(&curSize, TMP_SIZE, sizeof(int)) ;
-	while ( !IN.eof() ) {
-		char* TMP = new char[curSize];
+	for ( int i = 0; i < siz; ++i ) {
 		T cur;	
-		IN.read(TMP, curSize) ;
-		memcpy(&cur, TMP, curSize);
-		data.push_back(cur) ;
-
-		IN.read(TMP_SIZE, sizeof(int)) ;
-		memcpy(&curSize, TMP_SIZE, sizeof(int)) ;
+		deserialize(cur, IN);
+		data.push_back(cur);
 	}
 }
 
 //============================================================
 //==================== Set ===================================
 template<IsSet Container>
-void serialize(Container data, const char* FILENAME) {
-	fstream OUT(FILENAME, ios::out | ios::binary) ;	
+void serialize(Container data, fstream &OUT){
 	typedef typename Container::value_type T;
-	char* TMP_SIZE = new char[sizeof(int)];
-	for (auto &i : data) {
-		int curSize = sizeof(i);
-		memcpy(TMP_SIZE, &curSize, sizeof(int));
-		OUT.write(TMP_SIZE, sizeof(int));
-
-		char* TMP = new char[curSize];
-		memcpy(TMP, &i, curSize);
-		OUT.write(TMP, curSize);
-	}
+	int siz = data.size();
+	serialize(siz, OUT);
+	for (auto &i : data)
+		serialize(i, OUT);
 }
 
 template<IsSet Container>
-void deserialize(Container &data, const char* FILENAME) {
-	fstream IN(FILENAME, ios::in | ios::binary) ;	
+void deserialize(Container &data, fstream &IN){
 	typedef typename Container::value_type T;
-	
-	char* TMP_SIZE = new char[sizeof(int)];
-	int curSize;
-
-	IN.read(TMP_SIZE, sizeof(int)) ;
-	memcpy(&curSize, TMP_SIZE, sizeof(int)) ;
-	while ( !IN.eof() ) {
-		char* TMP = new char[curSize];
+	int siz;
+	deserialize(siz, IN);
+	for ( int i = 0; i < siz; ++i ) {
 		T cur;	
-		IN.read(TMP, curSize) ;
-		memcpy(&cur, TMP, curSize);
+		deserialize(cur, IN);
 		data.insert(cur) ;
-
-		IN.read(TMP_SIZE, sizeof(int)) ;
-		memcpy(&curSize, TMP_SIZE, sizeof(int)) ;
 	}
 }
-
-
 
 int main() {
 	int INT[2] = {7, 0} ;
@@ -159,9 +127,12 @@ int main() {
 	vector<int> VEC[2] ;
 	for ( int i = 1; i <= 3; ++i )
 		VEC[0].push_back(i) ;
-	list<float> LIS[2];
-	for (float i = 0.1; i < 1; i += 0.2)
-		LIS[0].push_back(i);
+	list<string> LIS[2];
+	string tmpstr = "Ceeeeb";
+	for (int i = 1; i <= 3; ++i) {
+		tmpstr = tmpstr + "!";
+		LIS[0].push_back(tmpstr);
+	}
 	set<float> SET[2];
 	for (float i = 99; i < 101; i += 0.624)
 		SET[0].insert(i);
@@ -169,23 +140,53 @@ int main() {
 	PRINT(0)
 	cout << endl << endl ;
 
-	serialize(INT[0], "int.data") ;	
-	serialize(FLO[0], "float.data") ;	
-	serialize(BOO[0], "bool.data") ;	
-	serialize(STR[0], "string.data") ;	
-	serialize(VEC[0], "vector.data") ;
-	serialize(LIS[0], "list.data") ;	
-	serialize(SET[0], "set.data") ;	
+	fstream OUT;
+	OUT.open("int.data", ios::out | ios::binary);
+	serialize(INT[0], OUT) ;	
+	OUT.close();
+	OUT.open("float.data", ios::out | ios::binary);
+	serialize(FLO[0], OUT) ;	
+	OUT.close();
+	OUT.open("bool.data", ios::out | ios::binary);
+	serialize(BOO[0], OUT) ;	
+	OUT.close();
+	OUT.open("string.data", ios::out | ios::binary);
+	serialize(STR[0], OUT) ;	
+	OUT.close();
+	OUT.open("vector.data", ios::out | ios::binary);
+	serialize(VEC[0], OUT) ;
+	OUT.close();
+	OUT.open("list.data", ios::out | ios::binary);
+	serialize(LIS[0], OUT) ;	
+	OUT.close();
+	OUT.open("set.data", ios::out | ios::binary);
+	serialize(SET[0], OUT) ;	
+	OUT.close();
 
 	cout << "serilization done\n\n";
 
-	deserialize(INT[1], "int.data") ;
-	deserialize(FLO[1], "float.data") ;
-	deserialize(BOO[1], "bool.data") ;	
-	deserialize(STR[1], "string.data") ;	
-	deserialize(VEC[1], "vector.data") ;
-	deserialize(LIS[1], "list.data") ;	
-	deserialize(SET[1], "set.data") ;	
+	fstream IN;
+	IN.open("int.data", ios::in | ios::binary);
+	deserialize(INT[1], IN) ;
+	IN.close();
+	IN.open("float.data", ios::in | ios::binary);
+	deserialize(FLO[1], IN) ;
+	IN.close();
+	IN.open("bool.data", ios::in | ios::binary);
+	deserialize(BOO[1], IN) ;	
+	IN.close();
+	IN.open("string.data", ios::in | ios::binary);
+	deserialize(STR[1], IN) ;	
+	IN.close();
+	IN.open("vector.data", ios::in | ios::binary);
+	deserialize(VEC[1], IN) ;
+	IN.close();
+	IN.open("list.data", ios::in | ios::binary);
+	deserialize(LIS[1], IN) ;	
+	IN.close();
+	IN.open("set.data", ios::in | ios::binary);
+	deserialize(SET[1], IN) ;	
+	IN.close();
 
 	PRINT(1) ;
 
