@@ -1,12 +1,17 @@
-#define PRINT(X) cout << INT[X] << endl << FLO[X] << endl << BOO[X] << endl << STR[X] << endl ;\
+#define PRINT(X) cout << INT[X] << endl << FLO[X] << endl << BOO[X] << endl << STR[X] << endl << "\nVECTOR: \n\t";\
 	copy(VEC[X].begin(),VEC[X].end(),ostream_iterator<int   >(cout," "));\
-	cout << endl ;\
+	cout << endl << "LIST: \n\t";\
 	for ( auto i : LIS[X] )\
 		cout << i << ' ' ; \
-	cout << endl ;\
+	cout << endl << "SET: \n\t" ;\
 	for ( auto i : SET[X] )\
 		cout << i << ' ' ; \
+	cout << endl << "PAIR: \n\t" << PAI[X].first << ' ' << PAI[X].second;\
+	cout << endl << "MAP: \n" ;\
+	for ( auto i : MAP[X] )\
+		cout << "\tMAP[" << i.first << "] = " << i.second << '\n' ; \
 	cout << endl ;
+
 #include<iostream>
 #include<fstream>
 #include<sstream>
@@ -31,6 +36,14 @@ concept IsLinear = std::is_same<Container, std::vector<typename Container::value
 template<typename Container>
 concept IsSet = std::is_same<Container, std::set<typename Container::value_type>>::value;
 
+template<typename Container>
+concept IsPair = std::is_same<Container,
+			      std::pair<typename Container::first_type,
+					typename Container::second_type>>::value;
+template<typename Container>
+concept IsMap = std::is_same<Container,
+			     std::map<typename Container::key_type,
+				      typename Container::mapped_type>>::value;
 //============================================================
 //==================== Arithmetic ============================
 template<IsNumber T>
@@ -69,6 +82,7 @@ void deserialize(string& data, fstream& IN){
 		deserialize(cur, IN);
 		data += cur ;
 	}
+	data.pop_back();
 	cout << "STR : " << data << endl;
 }
 
@@ -119,6 +133,48 @@ void deserialize(Container &data, fstream &IN){
 	}
 }
 
+//============================================================
+//==================== Pair ==================================
+template<IsPair Container>
+void serialize(Container data, fstream& OUT) {
+	serialize(data.first, OUT);
+	serialize(data.second, OUT);
+}
+template<IsPair Container>
+void deserialize(Container &data, fstream& IN) {
+	typedef typename Container::first_type T1;
+	typedef typename Container::second_type T2;
+	T1 x1;
+	T2 x2;
+	deserialize(x1, IN);
+	deserialize(x2, IN);
+	data = make_pair(x1, x2);
+}
+//============================================================
+//==================== Map ===================================
+template<IsMap Container>
+void serialize(Container data, fstream& OUT) {
+	int siz = data.size();
+	serialize(siz, OUT);
+	for (auto it : data)
+		serialize(it, OUT);
+}
+template<IsMap Container>
+void deserialize(Container &data, fstream& IN) {
+	typedef typename Container::key_type T1;
+	typedef typename Container::mapped_type T2;
+	int siz;
+	T1 x1;
+	T2 x2;
+	data.clear();
+	deserialize(siz, IN);
+	for (int i = 0; i < siz; ++i) {
+		deserialize(x1, IN);
+		deserialize(x2, IN);
+		data[x1] = x2;
+	}
+}
+
 int main() {
 	int INT[2] = {7, 0} ;
 	float FLO[2] = {float(3.27), float(0)} ;
@@ -127,18 +183,30 @@ int main() {
 	vector<int> VEC[2] ;
 	for ( int i = 1; i <= 3; ++i )
 		VEC[0].push_back(i) ;
+
 	list<string> LIS[2];
 	string tmpstr = "Ceeeeb";
 	for (int i = 1; i <= 3; ++i) {
 		tmpstr = tmpstr + "!";
 		LIS[0].push_back(tmpstr);
 	}
+
 	set<float> SET[2];
 	for (float i = 99; i < 101; i += 0.624)
 		SET[0].insert(i);
 
+	pair<string, int> PAI[2];
+	PAI[0] = make_pair("PAIR_FIRST", 2);
+	
+	map<string, double> MAP[2];
+	MAP[0]["eleven"] = 11;
+	MAP[0]["thousand"] = 1000;
+
+
 	PRINT(0)
 	cout << endl << endl ;
+
+
 
 	fstream OUT;
 	OUT.open("int.data", ios::out | ios::binary);
@@ -161,6 +229,12 @@ int main() {
 	OUT.close();
 	OUT.open("set.data", ios::out | ios::binary);
 	serialize(SET[0], OUT) ;	
+	OUT.close();
+	OUT.open("pair.data", ios::out | ios::binary);
+	serialize(PAI[0], OUT) ;	
+	OUT.close();
+	OUT.open("map.data", ios::out | ios::binary);
+	serialize(MAP[0], OUT) ;	
 	OUT.close();
 
 	cout << "serilization done\n\n";
@@ -186,6 +260,12 @@ int main() {
 	IN.close();
 	IN.open("set.data", ios::in | ios::binary);
 	deserialize(SET[1], IN) ;	
+	IN.close();
+	IN.open("pair.data", ios::in | ios::binary);
+	deserialize(PAI[1], IN) ;	
+	IN.close();
+	IN.open("map.data", ios::in | ios::binary);
+	deserialize(MAP[1], IN) ;	
 	IN.close();
 
 	PRINT(1) ;
