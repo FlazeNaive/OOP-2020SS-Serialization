@@ -1,22 +1,26 @@
 ﻿  binary.cpp
-D:\work\Final_\binary.cpp(70,27): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-D:\work\Final_\binary.cpp(195,40): warning C4305: “+=”: 从“double”到“float”截断
-D:\work\Final_\binary.cpp(94,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-D:\work\Final_\binary.cpp(225): message : 查看对正在编译的函数 模板 实例化“void serialize<std::vector<int,std::allocator<int>>>(Container,std::fstream &)”的引用
+D:\work\Final_\binary.cpp(7,27): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  binary.h
+  main.cpp
+D:\work\Final_\main.cpp(70,40): warning C4305: “+=”: 从“double”到“float”截断
+D:\work\Final_\binary.h(57,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\work\Final_\main.cpp(108): message : 查看对正在编译的函数 模板 实例化“void serialize<std::vector<int,std::allocator<int>>>(Container,std::fstream &)”的引用
           with
           [
               Container=std::vector<int,std::allocator<int>>
           ]
-D:\work\Final_\binary.cpp(118,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-D:\work\Final_\binary.cpp(231): message : 查看对正在编译的函数 模板 实例化“void serialize<std::set<float,std::less<float>,std::allocator<float>>>(Container,std::fstream &)”的引用
+D:\work\Final_\binary.h(81,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\work\Final_\main.cpp(116): message : 查看对正在编译的函数 模板 实例化“void serialize<std::set<float,std::less<float>,std::allocator<float>>>(Container,std::fstream &)”的引用
           with
           [
               Container=std::set<float,std::less<float>,std::allocator<float>>
           ]
-D:\work\Final_\binary.cpp(157,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-D:\work\Final_\binary.cpp(237): message : 查看对正在编译的函数 模板 实例化“void serialize<std::map<std::string,double,std::less<std::string>,std::allocator<std::pair<const std::string,double>>>>(Container,std::fstream &)”的引用
+D:\work\Final_\binary.h(120,1): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\work\Final_\main.cpp(124): message : 查看对正在编译的函数 模板 实例化“void serialize<std::map<std::string,double,std::less<std::string>,std::allocator<std::pair<const std::string,double>>>>(Container,std::fstream &)”的引用
           with
           [
               Container=std::map<std::string,double,std::less<std::string>,std::allocator<std::pair<const std::string,double>>>
           ]
+  正在生成代码...
+x64\Debug\binary.obj : warning LNK4042: 对象被多次指定；已忽略多余的指定
   Final_.vcxproj -> D:\work\Final_\x64\Debug\Final_.exe
