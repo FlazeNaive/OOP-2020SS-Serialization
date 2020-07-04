@@ -1,5 +1,6 @@
 #include"binary.h"
 
+namespace binary_serialize {
 //============================================================
 //==================== String ================================
 
@@ -19,4 +20,5 @@ void deserialize(std::string& data, std::fstream& IN){
 		data += cur ;
 	}
 	data.pop_back();
+}
 }
