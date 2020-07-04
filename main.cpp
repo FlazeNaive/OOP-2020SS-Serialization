@@ -11,7 +11,10 @@
 	for ( auto i : MAP[X] )\
 		cout << "\tMAP[" << i.first << "] = " << i.second << '\n' ; \
 	cout <<  "USER_DEFINED (TYPE_CAR): \n\t" ;\
-	cout << "ID = " <<  CAR[X].ID << "\n\towner = " << CAR[X].owner << "\n\tdist = " << CAR[X].dist << "\n\tage = " << CAR[X].age ;\
+	cout << "ID = " <<  CAR[X].ID << "\n\towner = "  ;\
+	for ( auto i : CAR[X].owner ) \
+		cout << i << ", " ; \
+	cout << "\n\tdist = " << CAR[X].dist << "\n\tage = " << CAR[X].age ;\
 	cout << endl ;
 
 #include"binary.h"
@@ -30,11 +33,12 @@ using namespace binary_serialize;
 //==========================================================================================
 //==================== User-Defined ========================================================
 struct TYPE_CAR {
-	string ID, owner;
+	string ID;
+	vector<string> owner;
 	int dist, age;
 	TYPE_CAR() {}
-	TYPE_CAR(string ID, string owner, int dist, int age) :
-		ID(ID), owner(owner), dist(dist), age(age) {}
+	TYPE_CAR(string ID, int dist, int age) :
+		ID(ID), dist(dist), age(age) {}
 };
 void serialize(struct TYPE_CAR data, fstream &OUT) {
 	serialize(data.ID, OUT);
@@ -79,7 +83,11 @@ int main() {
 	MAP[0]["thousand"] = 1000;
 
 	struct TYPE_CAR CAR[2];
-	CAR[0] = TYPE_CAR("ABC01", "someone", 10238, 7);
+	CAR[0] = TYPE_CAR("ABC01", 10238, 7);
+	CAR[0].owner.push_back("Alice");
+	CAR[0].owner.push_back("Bob");
+	CAR[0].owner.push_back("Carol");
+	CAR[0].owner.push_back("David");
 
 //==========================================================================================
 
