@@ -3,3 +3,4 @@
 *.cpp~
 .vs
 .gitignore~
+x64

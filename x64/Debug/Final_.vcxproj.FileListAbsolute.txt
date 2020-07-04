@@ -1,2 +1,0 @@
-D:\work\Final_\x64\Debug\Final_.exe
-D:\work\Final_\x64\Debug\Final_.pdb
