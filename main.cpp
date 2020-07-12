@@ -26,6 +26,7 @@
 #include<list>
 #include<set>
 #include<map>
+#include"base64.h"
 
 using namespace std ;
 using namespace binary_serialize;
@@ -189,6 +190,12 @@ int main() {
 	PRINT(1) ;
 
 //==========================================================================================
+
+	string ori = "RUARUARUA", enc, decc ;
+	enc = Encode64(ori) ;
+	decc = Decode64(enc) ;
+
+	cout << endl << ori << endl << enc << endl << decc << endl ;
 
 	return 0 ;
 }
