@@ -1,6 +1,6 @@
 # **Object** Serialization
 
-Final project for OOP during 2020 SS semester. 
+Final project for ZJU OOP during 2020 SS semester. 
 
 It uses some features (concept)  of C++20 standard. You can compile it with VisualStudio2019 or the latest version of g++. 
 
